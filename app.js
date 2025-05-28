@@ -26,7 +26,7 @@ var distances = [];
 var mode = 'bar';
 
 canvas.addEventListener('click', event => {
-  mode = mode === 'bar' ? 'line' : 'bar';
+  mode = mode === 'graph' ? 'bar' : 'graph';
   drawWaves();
 });
 
@@ -41,28 +41,20 @@ function drawWaves() {
     var offset = Math.max(0, distances.length - max);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.strokeStyle = '#005d79';
-    if (mode === 'bar') {
+    if (mode === 'graph') {
       for (var i = 0; i < Math.max(distances.length, max); i++) {
         var barHeight = Math.round(distances[i + offset ] * canvas.height / distance_maximum);
         context.rect(11 * i + margin, canvas.height - barHeight, margin, Math.max(0, barHeight - margin));
         context.stroke();
       }
-    } else if (mode === 'line') {
-      context.beginPath();
-      context.lineWidth = 6;
-      context.lineJoin = 'round';
-      context.shadowBlur = '1';
-      context.shadowColor = '#333';
-      context.shadowOffsetY = '1';
-      for (var i = 0; i < Math.max(distances.length, max); i++) {
-        var lineHeight = Math.round(distances[i + offset ] * canvas.height / 200);
-        if (i === 0) {
-          context.moveTo(11 * i, canvas.height - lineHeight);
-        } else {
-          context.lineTo(11 * i, canvas.height - lineHeight);
-        }
-        context.stroke();
-      }
+    } else if (mode === 'bar') {
+      var barHeight = 50;
+      var barWidth = Math.round(distances[distances.length - 1] * canvas.width / distance_maximum);
+      var grd = context.createLinearGradient(0, 0, barWidth, barHeight);
+      grd.addColorStop(0, "red");
+      grd.addColorStop(1, "blue");
+      context.fillStyle = grd;
+      context.fillRect(0, canvas.height - barHeight, barWidth, barHeight);
     }
   });
 }
